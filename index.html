@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="Shift_JIS">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Stick&display=swap" rel="stylesheet">
+    <meta name="description" content="まだテスト中、難しいかもしれない">
+    <meta property="og:image" content="img-1/og.png" />
+    <title>じゃんけん</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #D6D6D6;
+            padding: 40px;
+            font-family: "Stick", sans-serif;
+            font-weight: 400;
+        }
+
+        .choices button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 60px;
+            border: 2px solid gray;
+            border-radius: 12px;
+            padding-bottom: 12px;
+            width: 120px;
+            height: 120px;
+        }
+
+        .choices button:active {
+            background-color: rgba(128, 128, 128, 0.403);
+        }
+
+        .images {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 30px;
+        }
+
+        .images div {
+            text-align: center;
+        }
+
+        .images img {
+            width: 240px;
+            border-radius: 10px;
+
+        }
+
+        .result {
+            font-size: 40px;
+            font-weight: 400;
+        }
+
+        .scoreboard {
+            margin-top: 4px;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="result" id="result">じゃんけん</div>
+
+    <div class="images">
+        <div>
+            <img id="player-img" class="img" src="img-1/fuma-0.png" alt="玩家出拳">
+        </div>
+        <div>
+
+            <img id="computer-img" class="img" src="img-1/sasuke-0.png" alt="電腦出拳">
+        </div>
+    </div>
+    <div class="scoreboard">
+        <span id="player-score">0</span>：<span id="cpu-score">0</span>
+    </div>
+
+
+    <div class="choices">
+        <button onclick="play('rock')">👊</button>
+        <button onclick="play('paper')">🖐</button>
+        <button onclick="play('scissors')">✌️</button>
+    </div>
+    <script>
+        const choices = ['rock', 'paper', 'scissors'];
+        let playerScore = 0;
+        let cpuScore = 0;
+
+        const playerStats = {
+            rock: 0,
+            paper: 0,
+            scissors: 0
+        };
+
+        const resultMap = {
+            win: '勝ち',
+            lose: '負け',
+            draw: '引き分け'
+        };
+
+        function getSmartComputerChoice() {
+
+
+
+            const total = playerStats.rock + playerStats.paper + playerStats.scissors;
+
+
+            if (total === 0 || Math.random() < 0.3) {
+                return choices[Math.floor(Math.random() * choices.length)];
+            }
+
+
+            let mostUsed = 'rock';
+            if (playerStats.paper > playerStats.rock && playerStats.paper > playerStats.scissors) {
+                mostUsed = 'paper';
+            } else if (playerStats.scissors > playerStats.rock && playerStats.scissors > playerStats.paper) {
+                mostUsed = 'scissors';
+            }
+
+            const counter = {
+                rock: 'paper',
+                paper: 'scissors',
+                scissors: 'rock'
+            };
+            return counter[mostUsed];
+        }
+
+        function play(playerChoice) {
+            playerStats[playerChoice]++;
+
+            const computerChoice = getSmartComputerChoice();
+            let outcome = '';
+
+            if (playerChoice === computerChoice) {
+                outcome = 'draw';
+            } else if (
+                (playerChoice === 'scissors' && computerChoice === 'paper') ||
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock')
+            ) {
+                outcome = 'win';
+                playerScore++;
+            } else {
+                outcome = 'lose';
+                cpuScore++;
+            }
+
+            document.getElementById('player-img').src = `img-1/fuma-${playerChoice}.png`;
+            document.getElementById('player-img').style.transform;
+            document.getElementById('computer-img').src = `img-1/sasuke-${computerChoice}-${outcome}.png`;
+
+
+            document.querySelectorAll(".img").forEach(function (img) {
+                const angle = (Math.random() * 9 - 1).toFixed(2);
+                img.style.transform = `rotate(${angle}deg)`;
+            });
+
+            document.getElementById('player-score').textContent = playerScore;
+            document.getElementById('cpu-score').textContent = cpuScore;
+
+            document.getElementById('result').textContent = resultMap[outcome];
+        }
+    </script>
+
+
+</body>
+
+</html>
